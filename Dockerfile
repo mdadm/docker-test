@@ -1,20 +1,14 @@
-# Version: 0.0.1
+# Version: 0.0.2
 FROM ubuntu:16.04
 MAINTAINER Aleksandr Kostarev <a.kostarev@xsolla.com>
-RUN apt update && apt upgrade -y
-RUN apt install -y git python python-pip virtualenv mc
-RUN mkdir -p /home/projects/
-RUN cd /home/projects/
-RUN git clone https://github.com/mdadm/cicd-buzz.git
-RUN cd cicd-buzz
-RUN ls -l
-RUN virtualenv venv
-RUN . venv/bin/activate
-RUN pip install --upgrade pip
-RUN ls -l
-RUN pip install -r /home/projects/cicd-buzz/requirements.txt
+RUN apt-get update
+RUN apt-get install -y apt-utils git python python-pip virtualenv mc
 
-ENTRYPOINT ['python']
-CMD ['app.py']
+COPY setup.sh /home
+RUN ["chmod", "+x", "/home/setup.sh"]
+RUN /home/setup.sh
+
+WORKDIR ['/home/project/cicd-buzz']
+ENTRYPOINT [ "/usr/bin/python", "/home/project/cicd-buzz/app.py"]
 
 EXPOSE 5000
